@@ -61,6 +61,11 @@ class AuthorizeClient implements ClientInterface
      */
     public function placeRequest(TransferInterface $transferObject)
     {
+        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/clientfile.log');
+		$Zlogger = new \Zend_Log();
+		$Zlogger->addWriter($writer);
+        $Zlogger->info("Welcome to the client");
+        $Zlogger->info($transferObject->getBody());
         $log = [
             'request' => $transferObject->getBody(),
             'request_uri' => $transferObject->getUri()

@@ -29,7 +29,10 @@ define(
                 template: 'VPG_VodapayGateway/payment/form'
             },
             redirectAfterPlaceOrder: false,
-
+            initObservable: function () {
+                this._super();
+                return this;
+            },
             getCode: function() {
                 return 'vodapay_gateway';
             },
@@ -37,7 +40,7 @@ define(
                 return {
                     'method': this.item.method,
                     'additional_data': {
-                        //'transaction_result': this.transactionResult()
+                        'check': 'Check'
                     }
                 };
             },
