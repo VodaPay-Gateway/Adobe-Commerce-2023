@@ -69,6 +69,12 @@
     </virtualType>
     <!-- Authorization Request -->
 
+    <type name="VPG\VodaPayGateway\Gateway\Request\AuthorizationRequest">
+        <arguments>
+            <argument name="config" xsi:type="object">VodaPayGatewayConfig</argument>
+            <argument name="logger" xsi:type="object">VodaPayGatewayLogger</argument>
+        </arguments>
+    </type>
 
     <!-- Value handlers infrastructure -->
     <virtualType name="VodaPayGatewayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
