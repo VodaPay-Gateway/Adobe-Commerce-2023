@@ -65,49 +65,24 @@ class AuthorizeClient implements ClientInterface
 		$Zlogger = new \Zend_Log();
 		$Zlogger->addWriter($writer);
         $Zlogger->info("Welcome to the client");
-        $Zlogger->info($transferObject->getBody());
         $log = [
             'request' => $transferObject->getBody(),
-            'request_uri' => $transferObject->getUri()
+            'request_uri' => $transferObject->getUri(),
         ];
-        $this->logger->debug($log);
-        //$result = [];
-        /** @var ZendClient $client */
-        //$client = $this->clientFactory->create();
-
-        // $client->setConfig($transferObject->getClientConfig());
-        // $client->setMethod($transferObject->getMethod());
-        // $client->setParameterPost($transferObject->getBody());
-        // $client->setHeaders($transferObject->getHeaders());
-        // $client->setUrlEncodeBody($transferObject->shouldEncode());
-        // $client->setUri($transferObject->getUri());
-
-        // try {
-        //     $response = $client->request();
-
-        //     $result = $this->converter
-        //         ? $this->converter->convert($response->getBody())
-        //         : [$response->getBody()];
-        //     $log['response'] = $result;
-        //     $this->logger->debug($log);
-        // } catch (\Zend_Http_Client_Exception $e) {
-        //     throw new \Magento\Payment\Gateway\Http\ClientException(
-        //         __($e->getMessage())
-        //     );
-        // } catch (\Magento\Payment\Gateway\Http\ConverterException $e) {
-        //     throw $e;
-        // } finally {
-        //     $this->logger->debug($log);
-        // }
-
-        /** @var PaymentDataObjectInterface $paymentDO */
-        $paymentDO = $handlingSubject['payment'];
-
-        $payment = $paymentDO->getPayment();
-
-        /** @var $payment \Magento\Sales\Model\Order\Payment */
-        $payment->setTransactionId($response[self::TXN_ID]);
-        $payment->setIsTransactionClosed(true);
+        $Zlogger->info(json_encode($transferObject->getBody()));
+        $Zlogger->info(json_encode($transferObject->getHeaders()));
+        
+        $client = new \GuzzleHttp\Client([
+            'headers' => $transferObject->getHeaders(),
+            'verify'=> false,
+            //'debug' => true,
+            'connect_timeout' => 60
+        ]);
+    
+        $response = $client->post($transferObject->getUri(),
+            ['body' => strval(json_encode($transferObject->getBody()))]
+        ); 
+        $Zlogger->info(json_encode($response));
         //return $result;
     }
 

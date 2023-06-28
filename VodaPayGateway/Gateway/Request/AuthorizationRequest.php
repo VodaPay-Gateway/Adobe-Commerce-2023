@@ -53,57 +53,33 @@ class AuthorizationRequest implements BuilderInterface
      */
     public function build(array $buildSubject)
     {
-		$writer = new \Zend_Log_Writer_Stream(BP . '/var/log/newfile.log');
+		$writer = new \Zend_Log_Writer_Stream(BP . '/var/log/clientfile.log');
 		$Zlogger = new \Zend_Log();
 		$Zlogger->addWriter($writer);
-		//$Zlogger->info('text message');
-		//$Zlogger->info('Array Log'.print_r($myArray, true));
-        $Zlogger->info('Logger test start:');
-		//$paymentObj = Helper\SubjectReader::readPayment($subject);
         if (!isset($buildSubject['payment'])
             || !$buildSubject['payment'] instanceof PaymentDataObjectInterface
         ) {
-			$Zlogger->info('first one result : '. !isset($buildSubject['payment']));
-			$Zlogger->info('second one result : '. !$buildSubject['payment'] instanceof PaymentDataObjectInterface);
-			$Zlogger->info('Logger obj fail : '. json_encode($buildSubject['payment']));
-
             throw new \InvalidArgumentException('Payment data object should be provided');
         }
 
-
-		$Zlogger->info('Passed if statement');
-
 		try
 		{
-				$Zlogger->info('Inside try');
-
 				$payloadVodapay = new \VodaPayGatewayClient\Model\VodaPayGatewayPayment();
 
 				/** @var PaymentDataObjectInterface $payment */
 				$payment = $buildSubject['payment'];
-				$Zlogger->info('got payment obj');
 				$order = $payment->getOrder();
 				$address = $order->getShippingAddress();
-				$Zlogger->info('got addresss');
-				$Zlogger->info("Cell number: ". $address->getTelephone());
-				//$Zlogger->info(json_encode($address));
-				//$amount = intval($this->getTotalAmount( $order ) * 100);// The amount must be in cents.
 				$amt = $buildSubject['amount'];
-				//$this->logger->debug('order : '. json_encode($order));
 				$amount = intval($amt * 100);// The amount must be in cents.
 
 				$payloadVodapay->setAmount($amount);
-				$Zlogger->info('amount set');
 				$rlength = 10;
 				$retrievalReference =   substr(
 					str_shuffle(str_repeat($x='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
 						ceil($rlength/strlen($x)) )),1,32
 				);
-				$Zlogger->info('ref '. $retrievalReference);
-				//$Zlogger->info('order obj'. is_null($order));
-				$Zlogger->info('ref 1'. $order->getOrderIncrementId());
 				$retrievalReference = str_pad(ltrim($order->getOrderIncrementId(), '0'), 12, $retrievalReference, STR_PAD_LEFT);
-				$Zlogger->info('ref 2 '. $retrievalReference);
 				$payloadVodapay->setTraceId(strval($retrievalReference));
 				$payloadVodapay->setEchoData(json_encode(['order_id'=>$order->getOrderIncrementId()]));
 				$additionData = new \VodaPayGatewayClient\Model\PaymentIntentAdditionalDataModel;
@@ -111,20 +87,22 @@ class AuthorizationRequest implements BuilderInterface
 				$styling->setLogoUrl("");
 				$styling->setBannerUrl("");
 				$payloadVodapay->setStyling($styling);	
-				$Zlogger->info('set styling ');
-				$Zlogger->info('Object '. $payloadVodapay);
 				$peripheryData = new \VodaPayGatewayClient\Model\Notifications;
 				$peripheryData->setCallbackUrl('https://vodapay.magento.com/vodapaygateway/redirect/success');
 				$eReceipt = new \VodaPayGatewayClient\Model\ElectronicReceipt;
-				$Zlogger->info('set '. $peripheryData);
-				$Zlogger->info('set erecipts '. $eReceipt);
 				$eReceipt->setMethod(\VodaPayGatewayClient\Model\ElectronicReceiptMethod::SMS);
-				$Zlogger->info('set erecipts '. $eReceipt);
 				$eReceipt->setAddress($address->getTelephone());
 				$payloadVodapay->setElectronicReceipt($eReceipt);
 				$payloadVodapay->setNotifications($peripheryData);
 				$Zlogger->info(strval($payloadVodapay));
-				return json_decode(json_encode(strval($payloadVodapay)), true);
+				return [
+					"echoData" => json_encode(['order_id'=>$order->getOrderIncrementId()]),
+					"traceId" => $retrievalReference,
+					"amount" => $amount,
+					"notifications" => $peripheryData,
+					"styling" => $styling,
+					"electronicReceipt" => $eReceipt
+				];
 
 		}
 		catch (Exception $e) {
