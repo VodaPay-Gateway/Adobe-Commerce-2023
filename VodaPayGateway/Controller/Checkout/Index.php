@@ -121,7 +121,7 @@ class Index extends AbstractAction {
 				$styling->setBannerUrl("");
                 $amount = intval($order->getTotalDue() * 100);
 				$peripheryData = new \VodaPayGatewayClient\Model\Notifications;
-				$peripheryData->setCallbackUrl('https://vodapay.magento.com/vpg/checkout/callback');
+				$peripheryData->setCallbackUrl('http://vodapay.magento.com/vpg/checkout/callback');
 				$eReceipt = new \VodaPayGatewayClient\Model\ElectronicReceipt;
 				$eReceipt->setMethod(\VodaPayGatewayClient\Model\ElectronicReceiptMethod::SMS);
 				$number = $address->getTelephone();

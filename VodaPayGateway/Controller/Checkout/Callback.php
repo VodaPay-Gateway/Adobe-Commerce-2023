@@ -18,9 +18,10 @@ class Callback extends AbstractAction {
         $responseCode = $responseObj->responseCode;
         $echoData = $responseObj->echoData;
         $Zlogger->info("Vpg Callback " . json_encode($echoData));
-        $orderId = json_decode($echoData, TRUE);
-
-        $order = $this->getOrderById($orderId);
+        $orderId = json_decode(json_decode($echoData, true));
+        //$Zlogger->info("Echo data ". $orderId);
+        $Zlogger->info("Echo data ". $orderId->order_id);
+        $order = $this->getOrderById($orderId->order_id);
         if(!$order) {
             $this->getLogger()->debug("VodaPay Gateway returned an id for an order that could not be retrieved: $orderId");
             $Zlogger->info("Order not found " . json_encode($echoData));
@@ -37,45 +38,41 @@ class Callback extends AbstractAction {
         //     $this->_redirect('checkout/onepage/failure', array('_secure'=> false));
         //     return;
         // }
+        if(in_array($responseCode, \VodaPayGatewayClient\Model\ResponseCodeConstants::getGoodResponseCodeList()))
+        {
+            if ($responseCode == "00") {
+                $orderState = Order::STATE_PROCESSING;
+                $Zlogger->info("Order found Callback " . json_encode($echoData));
+    
+                $orderStatus = 'vodapay_gateway_approved_order_status';
+    
+                $order->setState($orderState)
+                    ->setStatus($orderStatus)
+                    ->addStatusHistoryComment("VodaPay Gateway authorisation success. Transaction #$orderId->order_id");
+    
+                $payment = $order->getPayment();
+                $payment->setTransactionId($orderId->order_id);
+                $payment->addTransaction(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_CAPTURE, null, true);
+                $order->save();
+                $Zlogger->info("Order Saved " . json_encode($echoData));
+                $this->getMessageManager()->addSuccessMessage(__("Your payment with VodaPay Gateway is complete"));
+                $this->_redirect('checkout/onepage/success', array('_secure'=> false));
+            } 
+            else {
+                $this->getCheckoutHelper()->cancelCurrentOrder("Order #".($order->getId())." was rejected by VodaPay Gateway. Transaction #$transactionId.");
+                $this->getCheckoutHelper()->restoreQuote(); //restore cart
+                $this->getMessageManager()->addErrorMessage(__("There was an error in the Oxipay payment"));
+                $this->_redirect('checkout/cart', array('_secure'=> false));
+            }
+        }elseif (in_array($responseCode, \VodaPayGatewayClient\Model\ResponseCodeConstants::getBadResponseCodeList())) {
+                //FAILURE
+                $responseMessages = \VodaPayGatewayClient\Model\ResponseCodeConstants::getResponseText();
+                $failureMsg = $responseMessages[$responseCode];
+                $this->informTxnFailure($order,$failureMsg);
+            } else {
+                $this->informTxnFailure($order,$responseObj->responseMessage);
+            }
 
-        if ($result == "completed") {
-            $orderState = Order::STATE_PROCESSING;
-            $Zlogger->info("Order found Callback " . json_encode($echoData));
-
-            // $orderStatus = $this->getGatewayConfig()->getOxipayApprovedOrderStatus();
-            // if (!$this->statusExists($orderStatus)) {
-            //     $orderStatus = $order->getConfig()->getStateDefaultStatus($orderState);
-            // }
-
-            $orderStatus = 'vodapay_gateway_approved_order_status';
-
-            $order->setState($orderState)
-                ->setStatus($orderStatus)
-                ->addStatusHistoryComment("VodaPay Gateway authorisation success. Transaction #$orderId");
-
-	        $payment = $order->getPayment();
-	        $payment->setTransactionId($orderId);
-	        $payment->addTransaction(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_CAPTURE, null, true);
-            $order->save();
-            $Zlogger->info("Order Saved " . json_encode($echoData));
-            // $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-            // $emailSender = $objectManager->create('\Magento\Sales\Model\Order\Email\Sender\OrderSender');
-            // $emailSender->send($order);
-
-            // $invoiceAutomatically = $this->getGatewayConfig()->isAutomaticInvoice();
-            // if ($invoiceAutomatically) {
-            //     $this->invoiceOrder($order, $transactionId);
-            // }
-            
-            $this->getMessageManager()->addSuccessMessage(__("Your payment with VodaPay Gateway is complete"));
-            $this->_redirect('checkout/onepage/success', array('_secure'=> false));
-        } 
-        // else {
-        //     $this->getCheckoutHelper()->cancelCurrentOrder("Order #".($order->getId())." was rejected by oxipay. Transaction #$transactionId.");
-        //     $this->getCheckoutHelper()->restoreQuote(); //restore cart
-        //     $this->getMessageManager()->addErrorMessage(__("There was an error in the Oxipay payment"));
-        //     $this->_redirect('checkout/cart', array('_secure'=> false));
-        // }
     }
 
     private function statusExists($orderStatus)
