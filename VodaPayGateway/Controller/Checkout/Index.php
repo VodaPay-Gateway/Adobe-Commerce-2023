@@ -167,47 +167,25 @@ class Index extends AbstractAction {
             if(in_array($responseCode, \VodaPayGatewayClient\Model\ResponseCodeConstants::getGoodResponseCodeList())){
                 //SUCCESS
                 if($responseCode == "00"){
-                    //$peripheryData = $responseObj->peripheryData;
-                    //$peripheryDataObj = (object) $peripheryData;
                     $initiationUrl = $responseObj->data->initiationUrl;
                     $Zlogger->info('Initiation URL: '. $initiationUrl);
-                    //header("Location: $initiationUrl");
                     $this->_redirect($initiationUrl);
-                    // return [
-                    //     "succeeded" => true,
-                    //     "initiationUrl" => $initiationUrl
-                    // ];
                 }
             }elseif(in_array($responseCode, \VodaPayGatewayClient\Model\ResponseCodeConstants::getBadResponseCodeList())){
-            //     //FAILURE
-            //     $responseMessages = \VodaPayGatewayClient\Model\ResponseCodeConstants::getResponseText();
-            //     $failureMsg = $responseMessages[$responseCode];
-            //     return [
-            //         "succeeded" => false,
-            //         "error" => $failureMsg
-            //     ];
+                //FAILURE
+                $responseMessages = \VodaPayGatewayClient\Model\ResponseCodeConstants::getResponseText();
+                $failureMsg = $responseMessages[$responseCode];
+                $this->getCheckoutHelper()->cancelCurrentOrder("Order #".($order->getRealOrderId())." was rejected by VodaPay Gateway.");
+                $this->getCheckoutHelper()->restoreQuote(); //restore cart
+                $this->getMessageManager()->addErrorMessage(__("There was an error with you VodaPay Gateway payment"));
+                $this->_redirect('checkout/cart', array('_secure'=> false));
             }
     
         }
-            // if ($order->getState() === Order::STATE_PENDING_PAYMENT) {
-            //     $payload = $this->getPayload($order);
-            //     $this->postToCheckout($this->getGatewayConfig()->getGatewayUrl(), $payload);
-            // } else if ($order->getState() === Order::STATE_CANCELED) {
-            //     $errorMessage = $this->getCheckoutSession()->getOxipayErrorMessage(); //set in InitializationRequest
-            //     if ($errorMessage) {
-            //         $this->getMessageManager()->addWarningMessage($errorMessage);
-            //         $errorMessage = $this->getCheckoutSession()->unsOxipayErrorMessage();
-            //     }
-            //     $this->getCheckoutHelper()->restoreQuote(); //restore cart
-            //     $this->_redirect('checkout/cart');
-            // } else {
-            //     $this->getLogger()->debug('Order in unrecognized state: ' . $order->getState());
-            //     $this->_redirect('checkout/cart');
-            // }
         } catch (Exception $ex) {
-            $this->getLogger()->debug('An exception was encountered in oxipay/checkout/index: ' . $ex->getMessage());
+            $this->getLogger()->debug('An exception was encountered in vpg/checkout/index: ' . $ex->getMessage());
             $this->getLogger()->debug($ex->getTraceAsString());
-            $this->getMessageManager()->addErrorMessage(__('Unable to start Oxipay Checkout.'));
+            $this->getMessageManager()->addErrorMessage(__('Unable to start VodaPay Gateway Checkout.'));
         }
     }
 

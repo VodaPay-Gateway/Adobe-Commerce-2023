@@ -42,7 +42,6 @@ class Callback extends AbstractAction {
         {
             if ($responseCode == "00") {
                 $orderState = Order::STATE_PROCESSING;
-                $Zlogger->info("Order found Callback " . json_encode($echoData));
     
                 $orderStatus = 'vodapay_gateway_approved_order_status';
     
@@ -58,19 +57,20 @@ class Callback extends AbstractAction {
                 $this->getMessageManager()->addSuccessMessage(__("Your payment with VodaPay Gateway is complete"));
                 $this->_redirect('checkout/onepage/success', array('_secure'=> false));
             } 
-            else {
-                $this->getCheckoutHelper()->cancelCurrentOrder("Order #".($order->getId())." was rejected by VodaPay Gateway. Transaction #$transactionId.");
-                $this->getCheckoutHelper()->restoreQuote(); //restore cart
-                $this->getMessageManager()->addErrorMessage(__("There was an error in the Oxipay payment"));
-                $this->_redirect('checkout/cart', array('_secure'=> false));
-            }
         }elseif (in_array($responseCode, \VodaPayGatewayClient\Model\ResponseCodeConstants::getBadResponseCodeList())) {
                 //FAILURE
                 $responseMessages = \VodaPayGatewayClient\Model\ResponseCodeConstants::getResponseText();
                 $failureMsg = $responseMessages[$responseCode];
-                $this->informTxnFailure($order,$failureMsg);
+                $Zlogger->info('Error Message' . $failureMsg);
+                $this->getCheckoutHelper()->cancelCurrentOrder("Order #".($order->getId())." was rejected by VodaPay Gateway. Transaction #$transactionId.");
+                $this->getCheckoutHelper()->restoreQuote(); //restore cart
+                $this->getMessageManager()->addErrorMessage(__("There was an error with you VodaPay Gateway payment"));
+                $this->_redirect('checkout/cart', array('_secure'=> false));
             } else {
-                $this->informTxnFailure($order,$responseObj->responseMessage);
+                $this->getCheckoutHelper()->cancelCurrentOrder("Order #".($order->getId())." was rejected by VodaPay Gateway. Transaction #$transactionId.");
+                $this->getCheckoutHelper()->restoreQuote(); //restore cart
+                $this->getMessageManager()->addErrorMessage(__("There was an error with you VodaPay Gateway payment"));
+                $this->_redirect('checkout/cart', array('_secure'=> false));
             }
 
     }
