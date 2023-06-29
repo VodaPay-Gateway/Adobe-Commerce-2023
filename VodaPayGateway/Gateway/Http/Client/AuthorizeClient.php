@@ -33,43 +33,51 @@ class AuthorizeClient implements ClientInterface
             'request_uri' => $transferObject->getUri(),
         ];
         
-        $client = new \GuzzleHttp\Client([
-            'headers' => $transferObject->getHeaders(),
-            'verify'=> false,
-            //'debug' => true,
-            'connect_timeout' => 60
-        ]);
+        // $client = new \GuzzleHttp\Client([
+        //     'headers' => $transferObject->getHeaders(),
+        //     'verify'=> false,
+        //     //'debug' => true,
+        //     'connect_timeout' => 60
+        // ]);
     
-        $response = $client->post($transferObject->getUri(),
-            ['body' => strval(json_encode($transferObject->getBody()))]
-        ); 
-        $Zlogger->info(json_encode($response));
-        if($response->getStatusCode() == 200){
-            $Zlogger->info("Response 200");
-            $responseJson = $response->getBody()->getContents();
-            $responseObj = json_decode($responseJson);
+        // $response = $client->post($transferObject->getUri(),
+        //     ['body' => strval(json_encode($transferObject->getBody()))]
+        // ); 
+        // $Zlogger->info(json_encode($response));
+        // if($response->getStatusCode() == 200){
+        //     $Zlogger->info("Response 200");
+        //     $responseJson = $response->getBody()->getContents();
+        //     $responseObj = json_decode($responseJson);
     
-            $responseCode = $responseObj->data->responseCode;
-            $Zlogger->info(json_encode($responseObj->data));
-            if(in_array($responseCode, \VodaPayGatewayClient\Model\ResponseCodeConstants::getGoodResponseCodeList())){
-                //SUCCESS
-                if($responseCode == "00"){
-                    //$peripheryData = $responseObj->peripheryData;
-                    //$peripheryDataObj = (object) $peripheryData;
-                    $initiationUrl = $responseObj->data->initiationUrl;
-                    $Zlogger->info('Initiation URL: '. $initiationUrl);
-                    header("Location: $initiationUrl");
-                    $result = $initiationUrl;
-                }
-            }elseif(in_array($responseCode, \VodaPayGatewayClient\Model\ResponseCodeConstants::getBadResponseCodeList())){
-                //FAILURE
-                $responseMessages = \VodaPayGatewayClient\Model\ResponseCodeConstants::getResponseText();
-                $failureMsg = $responseMessages[$responseCode];
-                $this->informTxnFailure($failureMsg.'['.$responseCode.']{'.$responseObj->responseMessage.'}', $order);
-            }
+        //     $responseCode = $responseObj->data->responseCode;
+        //     $Zlogger->info(json_encode($responseObj->data));
+        //     if(in_array($responseCode, \VodaPayGatewayClient\Model\ResponseCodeConstants::getGoodResponseCodeList())){
+        //         //SUCCESS
+        //         if($responseCode == "00"){
+        //             //$peripheryData = $responseObj->peripheryData;
+        //             //$peripheryDataObj = (object) $peripheryData;
+        //             $initiationUrl = $responseObj->data->initiationUrl;
+        //             $Zlogger->info('Initiation URL: '. $initiationUrl);
+        //             header("Location: $initiationUrl");
+        //             return [
+        //                 "succeeded" => true,
+        //                 "initiationUrl" => $initiationUrl
+        //             ];
+        //         }
+        //     }elseif(in_array($responseCode, \VodaPayGatewayClient\Model\ResponseCodeConstants::getBadResponseCodeList())){
+        //         //FAILURE
+        //         $responseMessages = \VodaPayGatewayClient\Model\ResponseCodeConstants::getResponseText();
+        //         $failureMsg = $responseMessages[$responseCode];
+        //         return [
+        //             "succeeded" => false,
+        //             "error" => $failureMsg
+        //         ];
+        //     }
     
-        }
+        // }
         //return $result;
+        $response = [ 'IGNORED' => [ 'IGNORED' ] ];
+        return $response;
     }
 
     /**

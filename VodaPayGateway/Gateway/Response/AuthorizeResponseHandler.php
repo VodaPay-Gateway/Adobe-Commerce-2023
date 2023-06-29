@@ -14,12 +14,15 @@ class AuthorizeResponseHandler implements HandlerInterface
      */
     public function handle(array $handlingSubject, array $response)
     {
+        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/responsefile.log');
+		$Zlogger = new \Zend_Log();
+		$Zlogger->addWriter($writer);
+
         /** @var PaymentDataObjectInterface $paymentDO */
         $paymentDO = $handlingSubject['payment'];
+        $Zlogger->info('Response arr '. json_encode($response));
         $payment = $paymentDO->getPayment();
-
         /** @var $payment Payment */
         $payment->setIsTransactionPending(true);
-        $payment->setIsFraudDetected(true);
     }
 }

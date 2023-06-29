@@ -12,7 +12,8 @@ define(
         'Magento_Customer/js/model/customer',
         'Magento_Checkout/js/checkout-data',
         'Magento_Checkout/js/model/payment/additional-validators',
-        'mage/url'
+        'mage/url',
+        'Magento_Checkout/js/model/quote'
     ],
     function ($,
               Component,
@@ -20,6 +21,7 @@ define(
               selectPaymentMethodAction,
               customer,
               checkoutData,
+              quote,      
               additionalValidators,
               url)  {
         'use strict';
@@ -34,6 +36,10 @@ define(
                 return this;
             },
             getCode: function() {
+                // console.log("checkout", window.checkoutConfig);
+                // let customerDetails = customer.customerData;
+                // console.log("Quote", quote.billingAddress)
+                // console.log(customerDetails);
                 return 'vodapay_gateway';
             },
             getData: function() {
@@ -44,7 +50,7 @@ define(
                     }
                 };
             },
-
+            redirectAfterPlaceOrder: false,
             // getTransactionResults: function() {
             //     return _.map(window.checkoutConfig.payment.vodapay_gateway.transactionResults, function(value, key) {
             //         return {
@@ -63,11 +69,17 @@ define(
             // isAvailable: function() {
             //     return quote.totals().grand_total <= 0;
             // },
-            // afterPlaceOrder: function () {
-            //     // window.location.replace( url.build(window.checkoutConfig.payment.vodapay.redirectUrl.vodapay) );
-            //      window.location.replace( window.checkoutConfig.payment.vodapay.redirectUrl.vodapay );
-            //    // window.location.replace( "https://uat.traderoot.com:29083/home/VPS855608206300/paymentpage?sessionId=db7e39cf-839b-4d83-978c-18143cb7bdb4" );
-            // },
+            afterPlaceOrder: function () {
+
+                window.location.replace(url.build('vpg/checkout/index'));
+                //console.log("checkout", window.checkoutConfig);
+                let customerDetails = customer.customerData;
+                // console.log("Quote", quote.billingAddress)
+
+                // window.location.replace( url.build(window.checkoutConfig.payment.vodapay.redirectUrl.vodapay) );
+                 //window.location.replace(url.build('http://google.com'));
+               // window.location.replace( "https://uat.traderoot.com:29083/home/VPS855608206300/paymentpage?sessionId=db7e39cf-839b-4d83-978c-18143cb7bdb4" );
+            },
             /** Returns payment acceptance mark link path */
             // getPaymentAcceptanceMarkHref: function() {
             //     return window.checkoutConfig.payment.vodapay.paymentAcceptanceMarkHref;
