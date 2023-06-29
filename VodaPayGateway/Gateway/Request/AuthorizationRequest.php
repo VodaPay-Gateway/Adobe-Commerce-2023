@@ -53,7 +53,7 @@ class AuthorizationRequest implements BuilderInterface
      */
     public function build(array $buildSubject)
     {
-		$writer = new \Zend_Log_Writer_Stream(BP . '/var/log/clientfile.log');
+		$writer = new \Zend_Log_Writer_Stream(BP . '/var/log/requestfile.log');
 		$Zlogger = new \Zend_Log();
 		$Zlogger->addWriter($writer);
         if (!isset($buildSubject['payment'])
@@ -91,7 +91,15 @@ class AuthorizationRequest implements BuilderInterface
 				$peripheryData->setCallbackUrl('https://vodapay.magento.com/vodapaygateway/redirect/success');
 				$eReceipt = new \VodaPayGatewayClient\Model\ElectronicReceipt;
 				$eReceipt->setMethod(\VodaPayGatewayClient\Model\ElectronicReceiptMethod::SMS);
-				$eReceipt->setAddress($address->getTelephone());
+				$number = $address->getTelephone();
+				if(str_starts_with($number, '0'))
+				{
+					$ptn = "/^0/";
+					$number =  preg_replace($ptn, "27", $number);
+					$Zlogger->info("Number: ". $number);
+				}
+				//str_starts_with('http://www.google.com', 'http')
+				$eReceipt->setAddress($number);
 				$payloadVodapay->setElectronicReceipt($eReceipt);
 				$payloadVodapay->setNotifications($peripheryData);
 				$Zlogger->info(strval($payloadVodapay));

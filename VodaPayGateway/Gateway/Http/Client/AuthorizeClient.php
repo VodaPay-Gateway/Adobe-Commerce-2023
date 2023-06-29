@@ -12,47 +12,10 @@ use Magento\Payment\Gateway\Http\ConverterInterface;
 use Magento\Payment\Gateway\Http\TransferInterface;
 use Magento\Payment\Model\Method\Logger;
 
+require_once(dirname(__FILE__) .'\..\..\..\Vpg\lib\Model\ResponseCodeConstants.php');
+
 class AuthorizeClient implements ClientInterface
 {
-    const SUCCESS = 1;
-    const FAILURE = 0;
-
-    /**
-     * @var ZendClientFactory
-     */
-    private $clientFactory;
-
-    /**
-     * @var ConverterInterface | null
-     */
-    private $converter;
-
-    /**
-     * @var Logger
-     */
-    private $logger;
-
-    /**
-     * @var array
-     */
-    private $results = [
-        self::SUCCESS,
-        self::FAILURE
-    ];
-
-    /**
-     * @param Logger $logger
-     */
-    public function __construct(
-        ZendClientFactory $clientFactory,
-        Logger $logger,
-        ConverterInterface $converter = null
-    ) {
-        $this->clientFactory = $clientFactory;
-        $this->converter = $converter;
-        $this->logger = $logger;
-    }
-
     /**
      * Places request to gateway. Returns result as ENV array
      *
@@ -69,8 +32,6 @@ class AuthorizeClient implements ClientInterface
             'request' => $transferObject->getBody(),
             'request_uri' => $transferObject->getUri(),
         ];
-        $Zlogger->info(json_encode($transferObject->getBody()));
-        $Zlogger->info(json_encode($transferObject->getHeaders()));
         
         $client = new \GuzzleHttp\Client([
             'headers' => $transferObject->getHeaders(),
@@ -83,6 +44,31 @@ class AuthorizeClient implements ClientInterface
             ['body' => strval(json_encode($transferObject->getBody()))]
         ); 
         $Zlogger->info(json_encode($response));
+        if($response->getStatusCode() == 200){
+            $Zlogger->info("Response 200");
+            $responseJson = $response->getBody()->getContents();
+            $responseObj = json_decode($responseJson);
+    
+            $responseCode = $responseObj->data->responseCode;
+            $Zlogger->info(json_encode($responseObj->data));
+            if(in_array($responseCode, \VodaPayGatewayClient\Model\ResponseCodeConstants::getGoodResponseCodeList())){
+                //SUCCESS
+                if($responseCode == "00"){
+                    //$peripheryData = $responseObj->peripheryData;
+                    //$peripheryDataObj = (object) $peripheryData;
+                    $initiationUrl = $responseObj->data->initiationUrl;
+                    $Zlogger->info('Initiation URL: '. $initiationUrl);
+                    header("Location: $initiationUrl");
+                    $result = $initiationUrl;
+                }
+            }elseif(in_array($responseCode, \VodaPayGatewayClient\Model\ResponseCodeConstants::getBadResponseCodeList())){
+                //FAILURE
+                $responseMessages = \VodaPayGatewayClient\Model\ResponseCodeConstants::getResponseText();
+                $failureMsg = $responseMessages[$responseCode];
+                $this->informTxnFailure($failureMsg.'['.$responseCode.']{'.$responseObj->responseMessage.'}', $order);
+            }
+    
+        }
         //return $result;
     }
 

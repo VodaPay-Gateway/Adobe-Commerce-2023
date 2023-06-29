@@ -44,8 +44,9 @@ class TransferFactory implements TransferFactoryInterface
             ->setMethod('POST')
             ->setHeaders(
                 [
-                    'api-key' => 'a7a46c7d-3e4e-40c8-9de5-49ec7c4bfc44',
-                    'test' => 'false'
+                    'api-key' => 'c5fee168-01e1-4a04-b33e-a0805d6d2735',
+                    'test' => 'false',
+                    'Content-Type' => 'application/json'
                 ]
             )
             ->build();
