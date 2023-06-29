@@ -62,12 +62,12 @@ class Callback extends AbstractAction {
                 $responseMessages = \VodaPayGatewayClient\Model\ResponseCodeConstants::getResponseText();
                 $failureMsg = $responseMessages[$responseCode];
                 $Zlogger->info('Error Message' . $failureMsg);
-                $this->getCheckoutHelper()->cancelCurrentOrder("Order #".($order->getId())." was rejected by VodaPay Gateway. Transaction #$transactionId.");
+                $this->getCheckoutHelper()->cancelCurrentOrder("Order #".($order->getId())." was rejected by VodaPay Gateway.");
                 $this->getCheckoutHelper()->restoreQuote(); //restore cart
                 $this->getMessageManager()->addErrorMessage(__("There was an error with you VodaPay Gateway payment"));
                 $this->_redirect('checkout/cart', array('_secure'=> false));
             } else {
-                $this->getCheckoutHelper()->cancelCurrentOrder("Order #".($order->getId())." was rejected by VodaPay Gateway. Transaction #$transactionId.");
+                $this->getCheckoutHelper()->cancelCurrentOrder("Order #".($order->getId())." was rejected by VodaPay Gateway.");
                 $this->getCheckoutHelper()->restoreQuote(); //restore cart
                 $this->getMessageManager()->addErrorMessage(__("There was an error with you VodaPay Gateway payment"));
                 $this->_redirect('checkout/cart', array('_secure'=> false));

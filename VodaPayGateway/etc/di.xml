@@ -19,23 +19,22 @@
     </virtualType>
 
     <!-- Configuration reader -->
-    <virtualType name="VodaPayGatewayConfig" type="Magento\Payment\Gateway\Config\Config">
+    <type name="VPG\VodaPayGateway\Gateway\Config\Config">
         <arguments>
-            <argument name="methodCode" xsi:type="const">\VPG\VodaPayGateway\Model\Ui\ConfigProvider::CODE</argument>
+            <argument name="methodCode" xsi:type="const">VPG\VodaPayGateway\Gateway\Config\Config::CODE</argument>
         </arguments>
-    </virtualType>
+    </type>
 
     <!-- Logger, initialized with  -->
     <virtualType name="VodaPayGatewayLogger" type="Magento\Payment\Model\Method\Logger">
         <arguments>
-            <argument name="config" xsi:type="object">VodaPayGatewayConfig</argument>
+            <argument name="config" xsi:type="object">VPG\VodaPayGateway\Gateway\Config\Config</argument>
         </arguments>
     </virtualType>
 
     <type name="VPG\VodaPayGateway\Gateway\Http\Client\AuthorizeClient">
         <arguments>
-            <argument name="logger" xsi:type="object">VodaPayGatewayLogger</argument>
-            <argument name="clientFactory" xsi:type="object">Magento\Framework\HTTP\ZendClientFactory</argument>
+            <argument name="logger" xsi:type="object">VPG\VodaPayGateway\Gateway\Config\Config</argument>
         </arguments>
     </type>
 
@@ -70,7 +69,7 @@
 
     <type name="VPG\VodaPayGateway\Gateway\Request\AuthorizationRequest">
         <arguments>
-            <argument name="config" xsi:type="object">VodaPayGatewayConfig</argument>
+            <argument name="config" xsi:type="object">VPG\VodaPayGateway\Gateway\Config\Config</argument>
             <argument name="logger" xsi:type="object">VodaPayGatewayLogger</argument>
         </arguments>
     </type>
@@ -85,13 +84,13 @@
     </virtualType>
     <virtualType name="VodaPayGatewayConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
         <arguments>
-            <argument name="configInterface" xsi:type="object">VodaPayGatewayConfig</argument>
+            <argument name="configInterface" xsi:type="object">VPG\VodaPayGateway\Gateway\Config\Config</argument>
         </arguments>
     </virtualType>
 
     <type name="VPG\VodaPayGateway\Block\Info">
         <arguments>
-            <argument name="config" xsi:type="object">VodaPayGatewayConfig</argument>
+            <argument name="config" xsi:type="object">VPG\VodaPayGateway\Gateway\Config\Config</argument>
         </arguments>
     </type>
 

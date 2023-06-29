@@ -104,6 +104,12 @@ class Index extends AbstractAction {
             $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/indexControllerfile.log');
             $Zlogger = new \Zend_Log();
             $Zlogger->addWriter($writer);
+            $Zlogger->info("Env" . $this->getGatewayConfig()->getEnvironment());
+            $Zlogger->info("Api Key" . $this->getGatewayConfig()->getApiKey());
+            $Zlogger->info("Endpoint" . $this->getGatewayConfig()->getEndpointUrl());
+            $env = $this->getGatewayConfig()->getEnvironment();
+            $apiKey = $this->getGatewayConfig()->getApiKey();
+            $endpoint = $this->getGatewayConfig()->getEndpointUrl();
             $order = $this->getOrder();
             $Zlogger->info("String: ". $order->getState());
             $address = $order->getShippingAddress();
@@ -145,8 +151,8 @@ class Index extends AbstractAction {
                 $Zlogger->info(json_encode($var));
                 $client = new \GuzzleHttp\Client([
                     'headers' => [
-                        'api-key' => 'c5fee168-01e1-4a04-b33e-a0805d6d2735',
-                        'test' => 'false',
+                        'api-key' => $apiKey,
+                        'test' => $env == '1' ? 'true' : 'false',
                         'Content-Type' => 'application/json'
                     ],
                     'verify'=> false,
@@ -154,7 +160,7 @@ class Index extends AbstractAction {
                     'connect_timeout' => 60
                 ]);
     
-        $response = $client->post('http://api.vodapaygatewayuat.vodacom.co.za/V2/Pay/OnceOff',
+        $response = $client->post($endpoint.'/V2/Pay/OnceOff',
             ['body' => strval(json_encode($var))]
         ); 
         if($response->getStatusCode() == 200){

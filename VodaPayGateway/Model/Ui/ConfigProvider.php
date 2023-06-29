@@ -15,6 +15,21 @@ final class ConfigProvider implements ConfigProviderInterface
 {
     const CODE = 'vodapay_gateway';
 
+    protected $_gatewayConfig;
+    protected $_scopeConfigInterface;
+    protected $customerSession;
+    protected $_urlBuilder;
+    protected $request;
+    protected $_assetRepo;
+
+    public function __construct(
+    Config $gatewayConfig,
+    Context $context,
+    )
+    {
+        $this->_gatewayConfig = $gatewayConfig;
+        $this->_urlBuilder = $context->getUrlBuilder();
+    }
     /**
      * Retrieve assoc array of checkout configuration
      *
@@ -25,10 +40,9 @@ final class ConfigProvider implements ConfigProviderInterface
         return [
             'payment' => [
                 self::CODE => [
-                    'transactionResults' => [
-                        Client::SUCCESS => __('Success'),
-                        Client::FAILURE => __('Fraud')
-                    ]
+                    'api_key' => $this->_gatewayConfig->getApiKey(),
+                    "endpoint" => $this->_gatewayConfig->getEndpoint(),
+                    "environment" => $this->_gatewayConfig->getEnvironment(), 
                 ]
             ]
         ];
