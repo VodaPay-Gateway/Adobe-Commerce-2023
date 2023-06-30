@@ -16,6 +16,7 @@ class Callback extends AbstractAction {
         $responseObj = json_decode(base64_decode($results['data']));
         $Zlogger->info("Vpg Callback " . json_encode($responseObj));
         $responseCode = $responseObj->responseCode;
+        $Zlogger->info($responseCode);
         $echoData = $responseObj->echoData;
         $Zlogger->info("Vpg Callback " . json_encode($echoData));
         $orderId = json_decode(json_decode($echoData, true));

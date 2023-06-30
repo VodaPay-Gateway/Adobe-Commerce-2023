@@ -11,6 +11,7 @@ define(
         'Magento_Checkout/js/action/select-payment-method',
         'Magento_Customer/js/model/customer',
         'Magento_Checkout/js/checkout-data',
+        'Magento_Checkout/js/model/url-builder',
         'Magento_Checkout/js/model/payment/additional-validators',
         'mage/url',
         'Magento_Checkout/js/model/quote'

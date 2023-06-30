@@ -7,6 +7,8 @@ namespace VPG\VodaPayGateway\Model\Ui;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
 use VPG\VodaPayGateway\Gateway\Http\Client\Client;
+use VPG\VodaPayGateway\Gateway\Config\Config;
+use Magento\Framework\App\Helper\Context;
 
 /**
  * Class ConfigProvider
@@ -16,11 +18,6 @@ final class ConfigProvider implements ConfigProviderInterface
     const CODE = 'vodapay_gateway';
 
     protected $_gatewayConfig;
-    protected $_scopeConfigInterface;
-    protected $customerSession;
-    protected $_urlBuilder;
-    protected $request;
-    protected $_assetRepo;
 
     public function __construct(
     Config $gatewayConfig,
@@ -28,7 +25,7 @@ final class ConfigProvider implements ConfigProviderInterface
     )
     {
         $this->_gatewayConfig = $gatewayConfig;
-        $this->_urlBuilder = $context->getUrlBuilder();
+        //$this->_urlBuilder = $context->getUrlBuilder();
     }
     /**
      * Retrieve assoc array of checkout configuration
@@ -41,7 +38,7 @@ final class ConfigProvider implements ConfigProviderInterface
             'payment' => [
                 self::CODE => [
                     'api_key' => $this->_gatewayConfig->getApiKey(),
-                    "endpoint" => $this->_gatewayConfig->getEndpoint(),
+                    "endpoint" => $this->_gatewayConfig->getEndpointUrl(),
                     "environment" => $this->_gatewayConfig->getEnvironment(), 
                 ]
             ]
