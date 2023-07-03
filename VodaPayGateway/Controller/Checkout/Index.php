@@ -39,6 +39,7 @@ class Index extends AbstractAction {
             $env = $this->getGatewayConfig()->getEnvironment();
             $apiKey = $this->getGatewayConfig()->getApiKey();
             $endpoint = $this->getGatewayConfig()->getEndpointUrl();
+            $storeUrl = $this->getGatewayConfig()->getStoreUrl();
             $order = $this->getOrder();
             $Zlogger->info("String: ". $order->getState());
             $address = $order->getShippingAddress();
@@ -56,7 +57,7 @@ class Index extends AbstractAction {
 				$styling->setBannerUrl("");
                 $amount = intval($order->getTotalDue() * 100);
 				$peripheryData = new \VodaPayGatewayClient\Model\Notifications;
-				$peripheryData->setCallbackUrl('http://vodapay.magento.com/vpg/checkout/callback');
+				$peripheryData->setCallbackUrl($storeUrl.'/vpg/checkout/callback');
 				$eReceipt = new \VodaPayGatewayClient\Model\ElectronicReceipt;
 				$eReceipt->setMethod(\VodaPayGatewayClient\Model\ElectronicReceiptMethod::SMS);
 				$number = $address->getTelephone();

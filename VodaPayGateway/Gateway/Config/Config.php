@@ -21,6 +21,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     const GATEWAY_URL = 'gateway_url';
     const ENVIRONMENT = 'environment';
     const DEBUG = 'debug';
+    const STORE_URL = 'store_url';
 
     /**
      * Get Merchant number
@@ -38,6 +39,15 @@ class Config extends \Magento\Payment\Gateway\Config\Config
      */
     public function getTitle() {
         return $this->getValue(self::TITLE);
+    }
+
+    /**
+     * Get Merchant number
+     *
+     * @return string
+     */
+    public function getStoreUrl() {
+        return $this->getValue(self::STORE_URL);
     }
 
     /**

@@ -29,6 +29,9 @@
                     <label>Environment</label>
                     <source_model>VPG\VodaPayGateway\Model\Adminhtml\Source\Environment</source_model>
                 </field>
+                <field id="store_url" translate="label" type="select" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Store URL</label>
+                </field>
             </group>
         </section>
     </system>
