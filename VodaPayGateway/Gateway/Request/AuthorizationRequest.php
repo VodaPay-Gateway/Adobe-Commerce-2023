@@ -6,14 +6,15 @@
  
 namespace VPG\VodaPayGateway\Gateway\Request;
 
-require( dirname( __FILE__ ) .'\..\..\Vpg\lib\Model\ModelInterface.php' );
-require( dirname( __FILE__ ) .'\..\..\Vpg\lib\Model\VodaPayGatewayPayment.php' );
-require( dirname( __FILE__ ) .'\..\..\Vpg\lib\Model\Notifications.php' );
-require( dirname( __FILE__ ) .'\..\..\Vpg\lib\Model\Styling.php' );
-require( dirname( __FILE__ ) .'\..\..\Vpg\lib\Model\ElectronicReceipt.php' );
-require( dirname( __FILE__ ) .'\..\..\Vpg\lib\Model\ElectronicReceiptMethod.php' );
-require( dirname( __FILE__ ) .'\..\..\Vpg\lib\ObjectSerializer.php' );
-require( dirname( __FILE__ ) .'\..\..\Vpg\lib\Model\PaymentIntentAdditionalDataModel.php' );
+// require_once( dirname(__FILE__) .'/Vpg/lib/Model/ModelInterface.php' );
+// require_once( dirname(__FILE__) .'/Vpg/lib/Model/VodaPayGatewayPayment.php' );
+// require_once( dirname(__FILE__) .'/Vpg/lib/Model/Notifications.php' );
+// require_once( dirname(__FILE__) .'/Vpg/lib/Model/Styling.php' );
+// require_once( dirname(__FILE__) .'/Vpg/lib/Model/ElectronicReceipt.php' );
+// require_once( dirname(__FILE__) .'/Vpg/lib/Model/ElectronicReceiptMethod.php' );
+// require_once( dirname(__FILE__) .'/Vpg/lib/ObjectSerializer.php' );
+// require_once( dirname(__FILE__) .'/Vpg/lib/Model/PaymentIntentAdditionalDataModel.php' );
+// require_once(dirname(__FILE__) .'/Vpg/lib/Model/ResponseCodeConstants.php');
 
 use Magento\Payment\Gateway\ConfigInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
@@ -62,66 +63,16 @@ class AuthorizationRequest implements BuilderInterface
             throw new \InvalidArgumentException('Payment data object should be provided');
         }
 
-		try
-		{
-				$payloadVodapay = new \VodaPayGatewayClient\Model\VodaPayGatewayPayment();
+		$payment = $buildSubject['payment'];
+        $stateObject = $buildSubject['stateObject'];
 
-				/** @var PaymentDataObjectInterface $payment */
-				$payment = $buildSubject['payment'];
-				$order = $payment->getOrder();
-				$address = $order->getShippingAddress();
-				$amt = $buildSubject['amount'];
-				$amount = intval($amt * 100);// The amount must be in cents.
+		$order = $payment->getOrder();
 
-				$payloadVodapay->setAmount($amount);
-				$rlength = 10;
-				$retrievalReference =   substr(
-					str_shuffle(str_repeat($x='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-						ceil($rlength/strlen($x)) )),1,32
-				);
-				$retrievalReference = str_pad(ltrim($order->getOrderIncrementId(), '0'), 12, $retrievalReference, STR_PAD_LEFT);
-				$payloadVodapay->setTraceId(strval($retrievalReference));
-				$payloadVodapay->setEchoData(json_encode(['order_id'=>$order->getOrderIncrementId()]));
-				$additionData = new \VodaPayGatewayClient\Model\PaymentIntentAdditionalDataModel;
-				$styling = new \VodaPayGatewayClient\Model\Styling;
-				$styling->setLogoUrl("");
-				$styling->setBannerUrl("");
-				$payloadVodapay->setStyling($styling);	
-				$peripheryData = new \VodaPayGatewayClient\Model\Notifications;
-				$peripheryData->setCallbackUrl('https://vodapay.magento.com/vodapaygateway/redirect/success');
-				$eReceipt = new \VodaPayGatewayClient\Model\ElectronicReceipt;
-				$eReceipt->setMethod(\VodaPayGatewayClient\Model\ElectronicReceiptMethod::SMS);
-				$number = $address->getTelephone();
-				if(str_starts_with($number, '0'))
-				{
-					$ptn = "/^0/";
-					$number =  preg_replace($ptn, "27", $number);
-					$Zlogger->info("Number: ". $number);
-				}
-				//str_starts_with('http://www.google.com', 'http')
-				$eReceipt->setAddress($number);
-				$payloadVodapay->setElectronicReceipt($eReceipt);
-				$payloadVodapay->setNotifications($peripheryData);
-				$Zlogger->info(strval($payloadVodapay));
-				return [
-					"echoData" => json_encode(['order_id'=>$order->getOrderIncrementId()]),
-					"traceId" => $retrievalReference,
-					"amount" => $amount,
-					"notifications" => $peripheryData,
-					"styling" => $styling,
-					"electronicReceipt" => $eReceipt
-				];
-
-		}
-		catch (Exception $e) {
+		$stateObject->setState(Order::STATE_PENDING_PAYMENT);
+        $stateObject->setStatus(Order::STATE_PENDING_PAYMENT);
+        $stateObject->setIsNotified(false);
 		
-			$Zlogger->info('in catch');
-			$Zlogger->info(json_encode($e));
-			$newWriter = new \Zend_Log_Writer_Stream(BP . '/var/log/newExceptionfile.log');
-			$newZlogger = new \Zend_Log();
-			$newZlogger->addWriter($newWriter);
-			$newZlogger->info('Logger Exception : '. json_encode(array('msg'=>$e->getMessage())));
-		} 
+        return [ 'IGNORED' => [ 'IGNORED' ] ];
     }
 
     /**

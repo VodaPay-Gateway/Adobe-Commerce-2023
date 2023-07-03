@@ -2,15 +2,15 @@
 
 namespace VPG\VodaPayGateway\Controller\Checkout;
 
-require_once( dirname( __FILE__ ) .'\..\..\Vpg\lib\Model\ModelInterface.php' );
-require_once( dirname( __FILE__ ) .'\..\..\Vpg\lib\Model\VodaPayGatewayPayment.php' );
-require_once( dirname( __FILE__ ) .'\..\..\Vpg\lib\Model\Notifications.php' );
-require_once( dirname( __FILE__ ) .'\..\..\Vpg\lib\Model\Styling.php' );
-require_once( dirname( __FILE__ ) .'\..\..\Vpg\lib\Model\ElectronicReceipt.php' );
-require_once( dirname( __FILE__ ) .'\..\..\Vpg\lib\Model\ElectronicReceiptMethod.php' );
-require_once( dirname( __FILE__ ) .'\..\..\Vpg\lib\ObjectSerializer.php' );
-require_once( dirname( __FILE__ ) .'\..\..\Vpg\lib\Model\PaymentIntentAdditionalDataModel.php' );
-require_once(dirname(__FILE__) .'\..\..\Vpg\lib\Model\ResponseCodeConstants.php');
+require_once( dirname(__FILE__) .'/Vpg/lib/Model/ModelInterface.php' );
+require_once( dirname(__FILE__) .'/Vpg/lib/Model/VodaPayGatewayPayment.php' );
+require_once( dirname(__FILE__) .'/Vpg/lib/Model/Notifications.php' );
+require_once( dirname(__FILE__) .'/Vpg/lib/Model/Styling.php' );
+require_once( dirname(__FILE__) .'/Vpg/lib/Model/ElectronicReceipt.php' );
+require_once( dirname(__FILE__) .'/Vpg/lib/Model/ElectronicReceiptMethod.php' );
+require_once( dirname(__FILE__) .'/Vpg/lib/ObjectSerializer.php' );
+require_once( dirname(__FILE__) .'/Vpg/lib/Model/PaymentIntentAdditionalDataModel.php' );
+require_once(dirname(__FILE__) .'/Vpg/lib/Model/ResponseCodeConstants.php');
 
 
 use Magento\Payment\Gateway\ConfigInterface;

@@ -12,7 +12,7 @@ use Magento\Payment\Gateway\Http\ConverterInterface;
 use Magento\Payment\Gateway\Http\TransferInterface;
 use Magento\Payment\Model\Method\Logger;
 
-require_once(dirname(__FILE__) .'\..\..\..\Vpg\lib\Model\ResponseCodeConstants.php');
+//require_once(dirname(__FILE__) .'\..\..\..\Vpg\lib\Model\ResponseCodeConstants.php');
 
 class AuthorizeClient implements ClientInterface
 {
