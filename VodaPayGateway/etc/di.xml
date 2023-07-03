@@ -94,4 +94,20 @@
         </arguments>
     </type>
 
+    <!-- Refund command -->
+    <virtualType name="VodaPayGatewayRefundCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">VodaPayGatewayRefundRequest</argument>
+            <argument name="transferFactory" xsi:type="object">VPG\VodaPayGateway\Gateway\Http\TransferFactory</argument> <!-- [Payment/Model/Method/Adapter][executeCommand]ERROR!Cannot instantiate interface Magento\Payment\Gateway\Http\TransferFactoryInterface if empty -->
+            <argument name="handler" xsi:type="object">VPG\VodaPayGateway\Model\Refund</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="VodaPayGatewayRefundRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="transaction" xsi:type="string">VPG\VodaPayGateway\Gateway\Request\RefundRequest</item>
+            </argument>
+        </arguments>
+    </virtualType>
 </config>

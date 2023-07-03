@@ -40,15 +40,7 @@ class TransferFactory implements TransferFactoryInterface
 
         return $this->transferBuilder
             ->setBody($request)
-            ->setUri('http://api.vodapaygatewayuat.vodacom.co.za/V2/Pay/OnceOff')
             ->setMethod('POST')
-            ->setHeaders(
-                [
-                    'api-key' => 'c5fee168-01e1-4a04-b33e-a0805d6d2735',
-                    'test' => 'false',
-                    'Content-Type' => 'application/json'
-                ]
-            )
             ->build();
     }
 }
