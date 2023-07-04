@@ -20,16 +20,16 @@ class AuthorizeResponseCodeValidator extends AbstractValidator
      */
     public function validate(array $validationSubject)
     {
-        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/responsefile.log');
-		$Zlogger = new \Zend_Log();
-		$Zlogger->addWriter($writer);
-        $Zlogger->info('Welcome to validator');
+        // $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/responsefile.log');
+		// $Zlogger = new \Zend_Log();
+		// $Zlogger->addWriter($writer);
+        // $Zlogger->info('Welcome to validator');
         if (!isset($validationSubject['response']) || !is_array($validationSubject['response'])) {
             throw new \InvalidArgumentException('Response does not exist');
         }
 
         $response = $validationSubject['response'];
-        $Zlogger->info('Response '. json_encode($response));
+        // $Zlogger->info('Response '. json_encode($response));
         if ($this->isSuccessfulTransaction($response)) {
             return $this->createResult(
                 true,

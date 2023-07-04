@@ -21,6 +21,7 @@ use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Payment\Model\Method\Logger;
 use Magento\Payment\Gateway\Helper;
+use Magento\Checkout\Model\Session;
 
 class AuthorizationRequest implements BuilderInterface
 {
@@ -54,9 +55,9 @@ class AuthorizationRequest implements BuilderInterface
      */
     public function build(array $buildSubject)
     {
-		$writer = new \Zend_Log_Writer_Stream(BP . '/var/log/requestfile.log');
-		$Zlogger = new \Zend_Log();
-		$Zlogger->addWriter($writer);
+		//$writer = new \Zend_Log_Writer_Stream(BP . '/var/log/requestfile.log');
+		//$Zlogger = new \Zend_Log();
+		//$Zlogger->addWriter($writer);
         if (!isset($buildSubject['payment'])
             || !$buildSubject['payment'] instanceof PaymentDataObjectInterface
         ) {
@@ -64,14 +65,14 @@ class AuthorizationRequest implements BuilderInterface
         }
 
 		$payment = $buildSubject['payment'];
-        $stateObject = $buildSubject['stateObject'];
+        //$stateObject = $buildSubject['stateObject'];
 
 		$order = $payment->getOrder();
 
-		$stateObject->setState(Order::STATE_PENDING_PAYMENT);
-        $stateObject->setStatus(Order::STATE_PENDING_PAYMENT);
-        $stateObject->setIsNotified(false);
-		
+		// $stateObject->setState(Order::STATE_PENDING_PAYMENT);
+        // $stateObject->setStatus(Order::STATE_PENDING_PAYMENT);
+        // $stateObject->setIsNotified(false);
+
         return [ 'IGNORED' => [ 'IGNORED' ] ];
     }
 
@@ -82,10 +83,10 @@ class AuthorizationRequest implements BuilderInterface
 	{
 		//$this->logger->debug('Grand Total : '. $order->getGrandTotal());
 		//$this->logger->debug('Base Grand Total : '. $order->getBaseGrandTotal());
-			$newWriter = new \Zend_Log_Writer_Stream(BP . '/var/log/getAmount.log');
-			$newZlogger = new \Zend_Log();
-			$newZlogger->addWriter($newWriter);
-			$newZlogger->info('Logger Order Amount : '. json_encode($order));
+			// $newWriter = new \Zend_Log_Writer_Stream(BP . '/var/log/getAmount.log');
+			// $newZlogger = new \Zend_Log();
+			// $newZlogger->addWriter($newWriter);
+			// $newZlogger->info('Logger Order Amount : '. json_encode($order));
 
 			try
 			{

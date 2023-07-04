@@ -67,10 +67,10 @@ class Config extends \Magento\Payment\Gateway\Config\Config
 	public function getEndpointUrl() {
         if(($this->getValue(self::ENVIRONMENT)  == '0') || ($this->getValue(self::ENVIRONMENT)  == '1'))
         {
-            return 'http://api.vodapaygatewayuat.vodacom.co.za';
+            return 'https://api.vodapaygatewayuat.vodacom.co.za';
         }
 
-        return 'http://api.vodapaygatewayuat.vodacom.co.za';
+        return 'https://api.vodapaygatewayuat.vodacom.co.za';
 	}
 
     /**

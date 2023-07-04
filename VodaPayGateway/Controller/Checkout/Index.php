@@ -30,18 +30,18 @@ class Index extends AbstractAction {
      */
     public function execute() {
         try {
-            $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/indexControllerfile.log');
-            $Zlogger = new \Zend_Log();
-            $Zlogger->addWriter($writer);
-            $Zlogger->info("Env" . $this->getGatewayConfig()->getEnvironment());
-            $Zlogger->info("Api Key" . $this->getGatewayConfig()->getApiKey());
-            $Zlogger->info("Endpoint" . $this->getGatewayConfig()->getEndpointUrl());
+            //$writer = new \Zend_Log_Writer_Stream(BP . '/var/log/indexControllerfile.log');
+            //$Zlogger = new \Zend_Log();
+            //$Zlogger->addWriter($writer);
+            //$Zlogger->info("Env" . $this->getGatewayConfig()->getEnvironment());
+            //$Zlogger->info("Api Key" . $this->getGatewayConfig()->getApiKey());
+            //$Zlogger->info("Endpoint" . $this->getGatewayConfig()->getEndpointUrl());
             $env = $this->getGatewayConfig()->getEnvironment();
             $apiKey = $this->getGatewayConfig()->getApiKey();
             $endpoint = $this->getGatewayConfig()->getEndpointUrl();
             $storeUrl = $this->getGatewayConfig()->getStoreUrl();
             $order = $this->getOrder();
-            $Zlogger->info("String: ". $order->getState());
+            //$Zlogger->info("String: ". $order->getState());
             $address = $order->getShippingAddress();
 
             $rlength = 10;
@@ -65,7 +65,7 @@ class Index extends AbstractAction {
 				{
 					$ptn = "/^0/";
 					$number =  preg_replace($ptn, "27", $number);
-					$Zlogger->info("Number: ". $number);
+				//	$Zlogger->info("Number: ". $number);
 				}
 				//str_starts_with('http://www.google.com', 'http')
 				$eReceipt->setAddress($number);
@@ -78,7 +78,6 @@ class Index extends AbstractAction {
 					"electronicReceipt" => $eReceipt
 				];
 
-                $Zlogger->info(json_encode($var));
                 $client = new \GuzzleHttp\Client([
                     'headers' => [
                         'api-key' => $apiKey,
@@ -94,17 +93,17 @@ class Index extends AbstractAction {
             ['body' => strval(json_encode($var))]
         ); 
         if($response->getStatusCode() == 200){
-            $Zlogger->info("Response 200");
+            // $Zlogger->info("Response 200");
             $responseJson = $response->getBody()->getContents();
             $responseObj = json_decode($responseJson);
     
             $responseCode = $responseObj->data->responseCode;
-            $Zlogger->info('Response'. json_encode($responseObj->data));
+            // $Zlogger->info('Response'. json_encode($responseObj->data));
             if(in_array($responseCode, \VodaPayGatewayClient\Model\ResponseCodeConstants::getGoodResponseCodeList())){
                 //SUCCESS
                 if($responseCode == "00"){
                     $initiationUrl = $responseObj->data->initiationUrl;
-                    $Zlogger->info('Initiation URL: '. $initiationUrl);
+                    // $Zlogger->info('Initiation URL: '. $initiationUrl);
                     $this->_redirect($initiationUrl);
                 }
             }elseif(in_array($responseCode, \VodaPayGatewayClient\Model\ResponseCodeConstants::getBadResponseCodeList())){

@@ -34,7 +34,7 @@
 
     <type name="VPG\VodaPayGateway\Gateway\Http\Client\AuthorizeClient">
         <arguments>
-            <argument name="logger" xsi:type="object">VPG\VodaPayGateway\Gateway\Config\Config</argument>
+            <argument name="logger" xsi:type="object">VodaPayGatewayLogger</argument>
         </arguments>
     </type>
 
