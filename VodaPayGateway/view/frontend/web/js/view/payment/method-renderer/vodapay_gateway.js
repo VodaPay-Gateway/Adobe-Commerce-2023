@@ -29,7 +29,7 @@ define(
 
         return Component.extend({
             defaults: {
-                template: 'VPG_VodapayGateway/payment/form'
+                template: 'VPG_VodaPayGateway/payment/form'
             },
             redirectAfterPlaceOrder: false,
             initialize: function() {

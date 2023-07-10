@@ -2,30 +2,32 @@
 
 namespace VPG\VodaPayGateway\Controller\Checkout;
 
+require_once(dirname(__FILE__) .'/Vpg/lib/Model/ResponseCodeConstants.php');
+
 use Magento\Sales\Model\Order;
 
 
 class Callback extends AbstractAction {
 
     public function execute() {
-        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/callbackControllerfile.log');
-        $Zlogger = new \Zend_Log();
-        $Zlogger->addWriter($writer);
+        // $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/callbackControllerfile.log');
+        // $Zlogger = new \Zend_Log();
+        // $Zlogger->addWriter($writer);
         $results = $_GET;
 
         $responseObj = json_decode(base64_decode($results['data']));
-        $Zlogger->info("Vpg Callback " . json_encode($responseObj));
+        //$Zlogger->info("Vpg Callback " . json_encode($responseObj));
         $responseCode = $responseObj->responseCode;
-        $Zlogger->info($responseCode);
+        //$Zlogger->info($responseCode);
         $echoData = $responseObj->echoData;
-        $Zlogger->info("Vpg Callback " . json_encode($echoData));
+        //$Zlogger->info("Vpg Callback " . json_encode($echoData));
         $orderId = json_decode(json_decode($echoData, true));
         //$Zlogger->info("Echo data ". $orderId);
-        $Zlogger->info("Echo data ". $orderId->order_id);
+        //$Zlogger->info("Echo data ". $orderId->order_id);
         $order = $this->getOrderById($orderId->order_id);
         if(!$order) {
             $this->getLogger()->debug("VodaPay Gateway returned an id for an order that could not be retrieved: $orderId");
-            $Zlogger->info("Order not found " . json_encode($echoData));
+            //$Zlogger->info("Order not found " . json_encode($echoData));
             $this->_redirect('checkout/onepage/error', array('_secure'=> false));
             return;
         }
@@ -44,17 +46,21 @@ class Callback extends AbstractAction {
             if ($responseCode == "00") {
                 $orderState = Order::STATE_PROCESSING;
     
-                $orderStatus = 'vodapay_gateway_approved_order_status';
+                $orderStatus = $this->getGatewayConfig()->getApprovedStatus();
     
                 $order->setState($orderState)
                     ->setStatus($orderStatus)
-                    ->addStatusHistoryComment("VodaPay Gateway authorisation success. Transaction #$orderId->order_id");
+                    ->addStatusHistoryComment("VodaPay Gateway authorisation success. Transaction #$responseObj->transactionId");
     
                 $payment = $order->getPayment();
-                $payment->setTransactionId($orderId->order_id);
+                $payment->setTransactionId($responseObj->transactionId);
                 $payment->addTransaction(\Magento\Sales\Model\Order\Payment\Transaction::TYPE_CAPTURE, null, true);
                 $order->save();
-                $Zlogger->info("Order Saved " . json_encode($echoData));
+
+                $this->invoiceOrder($order, $responseObj->transactionId);
+
+
+                //$Zlogger->info("Order Saved " . json_encode($echoData));
                 $this->getMessageManager()->addSuccessMessage(__("Your payment with VodaPay Gateway is complete"));
                 $this->_redirect('checkout/onepage/success', array('_secure'=> false));
             } 
@@ -62,7 +68,7 @@ class Callback extends AbstractAction {
                 //FAILURE
                 $responseMessages = \VodaPayGatewayClient\Model\ResponseCodeConstants::getResponseText();
                 $failureMsg = $responseMessages[$responseCode];
-                $Zlogger->info('Error Message' . $failureMsg);
+                //$Zlogger->info('Error Message' . $failureMsg);
                 $this->getCheckoutHelper()->cancelCurrentOrder("Order #".($order->getId())." was rejected by VodaPay Gateway.");
                 $this->getCheckoutHelper()->restoreQuote(); //restore cart
                 $this->getMessageManager()->addErrorMessage(__("There was an error with you VodaPay Gateway payment"));

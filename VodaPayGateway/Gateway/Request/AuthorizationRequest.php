@@ -22,6 +22,8 @@ use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Payment\Model\Method\Logger;
 use Magento\Payment\Gateway\Helper;
 use Magento\Checkout\Model\Session;
+use Magento\Payment\Gateway\Data\Order\OrderAdapter;
+use Magento\Sales\Model\Order;
 
 class AuthorizationRequest implements BuilderInterface
 {
@@ -67,7 +69,7 @@ class AuthorizationRequest implements BuilderInterface
 		$payment = $buildSubject['payment'];
         //$stateObject = $buildSubject['stateObject'];
 
-		$order = $payment->getOrder();
+		// $order = $payment->getOrder();
 
 		// $stateObject->setState(Order::STATE_PENDING_PAYMENT);
         // $stateObject->setStatus(Order::STATE_PENDING_PAYMENT);

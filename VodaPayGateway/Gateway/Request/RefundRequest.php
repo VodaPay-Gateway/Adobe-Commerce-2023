@@ -3,31 +3,26 @@
  * Copyright © 2016 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Oxipay\OxipayPaymentGateway\Gateway\Request;
+namespace VPG\VodaPayGateway\Gateway\Request;
 
 use Magento\Payment\Gateway\Request\BuilderInterface;
 use Magento\Checkout\Model\Session;
-use Oxipay\OxipayPaymentGateway\Gateway\Config\Config;
-use Psr\Log\LoggerInterface;
+use VPG\VodaPayGateway\Gateway\Config\Config;
 
 class RefundRequest implements BuilderInterface
 {
-    private $_logger;
     private $_session;
     private $_gatewayConfig;
 
     /**
      * @param Config $gatewayConfig
-     * @param LoggerInterface $logger
      * @param Session $session
      */
     public function __construct(
         Config $gatewayConfig,
-        LoggerInterface $logger,
         Session $session
     ) {
         $this->_gatewayConfig = $gatewayConfig;
-        $this->_logger = $logger;
         $this->_session = $session;
     }
 
@@ -45,9 +40,11 @@ class RefundRequest implements BuilderInterface
     public function build(array $buildSubject) {
     	$gateway_api_key = $this->_gatewayConfig->getApiKey();
     	$gateway_refund_gateway_url = $this->_gatewayConfig->getEndpointUrl().'/V2/Pay/Refund';
+        $env = $this->_gatewayConfig->getEnvironment();
     	return [ 
             'API_KEY'=>$gateway_merchant_id, 
-            'REFUND_URL'=>$gateway_refund_gateway_url 
+            'REFUND_URL'=>$gateway_refund_gateway_url,
+            'ENV' => $env
         ];
     }
 }

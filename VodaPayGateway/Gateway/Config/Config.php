@@ -22,6 +22,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     const ENVIRONMENT = 'environment';
     const DEBUG = 'debug';
     const STORE_URL = 'store_url';
+    const STATUS = 'vodapay_approved_order_status';
 
     /**
      * Get Merchant number
@@ -57,6 +58,15 @@ class Config extends \Magento\Payment\Gateway\Config\Config
      */
     public function getLogo() {
         return $this->getValue(self::GATEWAY_LOGO);
+    }
+
+    /**
+     * Get Status
+     *
+     * @return string
+     */
+    public function getApprovedStatus() {
+        return $this->getValue(self::STATUS);
     }
 
 

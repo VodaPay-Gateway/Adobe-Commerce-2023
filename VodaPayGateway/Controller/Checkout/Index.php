@@ -30,12 +30,12 @@ class Index extends AbstractAction {
      */
     public function execute() {
         try {
-            //$writer = new \Zend_Log_Writer_Stream(BP . '/var/log/indexControllerfile.log');
-            //$Zlogger = new \Zend_Log();
-            //$Zlogger->addWriter($writer);
-            //$Zlogger->info("Env" . $this->getGatewayConfig()->getEnvironment());
-            //$Zlogger->info("Api Key" . $this->getGatewayConfig()->getApiKey());
-            //$Zlogger->info("Endpoint" . $this->getGatewayConfig()->getEndpointUrl());
+            $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/indexControllerfile.log');
+            $Zlogger = new \Zend_Log();
+            $Zlogger->addWriter($writer);
+            $Zlogger->info("Env" . $this->getGatewayConfig()->getEnvironment());
+            $Zlogger->info("Api Key" . $this->getGatewayConfig()->getApiKey());
+            $Zlogger->info("Endpoint" . $this->getGatewayConfig()->getEndpointUrl());
             $env = $this->getGatewayConfig()->getEnvironment();
             $apiKey = $this->getGatewayConfig()->getApiKey();
             $endpoint = $this->getGatewayConfig()->getEndpointUrl();
