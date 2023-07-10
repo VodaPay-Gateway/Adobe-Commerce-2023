@@ -42,7 +42,7 @@ class RefundRequest implements BuilderInterface
     	$gateway_refund_gateway_url = $this->_gatewayConfig->getEndpointUrl().'/V2/Pay/Refund';
         $env = $this->_gatewayConfig->getEnvironment();
     	return [ 
-            'API_KEY'=>$gateway_merchant_id, 
+            'API_KEY'=>$gateway_api_key, 
             'REFUND_URL'=>$gateway_refund_gateway_url,
             'ENV' => $env
         ];

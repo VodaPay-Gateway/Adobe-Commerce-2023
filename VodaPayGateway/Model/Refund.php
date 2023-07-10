@@ -10,7 +10,7 @@ namespace VPG\VodaPayGateway\Model;
 //require_once( dirname(__FILE__) .'../Controller/Checkout/Vpg/lib/Model/ElectronicReceipt.php' );
 //require_once( dirname(__FILE__) .'../Controller/Checkout/Vpg/lib/Model/ElectronicReceiptMethod.php' );
 //require_once( dirname(__FILE__) .'../Controller/Checkout/Vpg/lib/ObjectSerializer.php' );
-require_once(dirname(__FILE__) .'../Controller/Checkout/Vpg/lib/Model/ResponseCodeConstants.php');
+//require_once(dirname(__FILE__) .'../Controller/Checkout/Vpg/lib/Model/ResponseCodeConstants.php');
 
 use VPG\VodaPayGateway\Helper\Crypto;
 use Magento\Payment\Gateway\Response\HandlerInterface;
@@ -113,7 +113,7 @@ class Refund extends \Magento\Payment\Model\Method\AbstractMethod implements Han
 		];
 
 		$json = json_encode($refund_details);
-
+		$Zlogger->info($json);
 		$client = new \GuzzleHttp\Client([
 			'headers' => [
 				'api-key' => $apiKey,
@@ -126,7 +126,7 @@ class Refund extends \Magento\Payment\Model\Method\AbstractMethod implements Han
 		]);
 
 		$response = $client->post($refund_url,
-			['body' => strval($refund_details)]
+			['body' => $json]
 		); 
 
 

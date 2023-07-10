@@ -44,6 +44,11 @@ define(
                     'method': this.item.method,
                 };
             },
+            getLogo:function(){
+                var logo = window.checkoutConfig.payment.vodapay_gateway.logo;
+                console.log(logo);
+                return logo;
+            },
             redirectAfterPlaceOrder: false,
             afterPlaceOrder: function () {
                 window.location.replace(url.build('vpg/checkout/index'));
