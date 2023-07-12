@@ -39,6 +39,7 @@ class Index extends AbstractAction {
             $env = $this->getGatewayConfig()->getEnvironment();
             $apiKey = $this->getGatewayConfig()->getApiKey();
             $endpoint = $this->getGatewayConfig()->getEndpointUrl();
+            $notification = $this->getGatewayConfig()->getNotificationUrl();
             $storeUrl = $this->getGatewayConfig()->getStoreUrl();
             $order = $this->getOrder();
             //$Zlogger->info("String: ". $order->getState());
@@ -57,6 +58,7 @@ class Index extends AbstractAction {
 				$styling->setBannerUrl("");
                 $amount = intval($order->getTotalDue() * 100);
 				$peripheryData = new \VodaPayGatewayClient\Model\Notifications;
+                $peripheryData->setNotificationUrl($notification);
 				$peripheryData->setCallbackUrl($storeUrl.'/vpg/checkout/callback');
 				$eReceipt = new \VodaPayGatewayClient\Model\ElectronicReceipt;
 				$eReceipt->setMethod(\VodaPayGatewayClient\Model\ElectronicReceiptMethod::SMS);

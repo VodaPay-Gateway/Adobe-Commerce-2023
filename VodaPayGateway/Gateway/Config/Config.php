@@ -22,6 +22,7 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     const ENVIRONMENT = 'environment';
     const DEBUG = 'debug';
     const STORE_URL = 'store_url';
+    const NOTIFICATION_URL = 'notification_url';
     const STATUS = 'vodapay_approved_order_status';
 
     /**
@@ -43,12 +44,21 @@ class Config extends \Magento\Payment\Gateway\Config\Config
     }
 
     /**
-     * Get Merchant number
+     * Get Store URL
      *
      * @return string
      */
     public function getStoreUrl() {
         return $this->getValue(self::STORE_URL);
+    }
+
+    /**
+     * Get Notification URL
+     *
+     * @return string
+     */
+    public function getNotificationUrl() {
+        return $this->getValue(self::NOTIFICATION_URL);
     }
 
     /**

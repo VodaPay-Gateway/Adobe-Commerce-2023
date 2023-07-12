@@ -47,10 +47,19 @@ class Callback extends AbstractAction {
                 $orderState = Order::STATE_PROCESSING;
     
                 $orderStatus = $this->getGatewayConfig()->getApprovedStatus();
-    
+                $env = $this->getGatewayConfig()->getEnvironment();
+                $environmentText = 'PRODUCTION';
+                if($env == 0)
+                {
+                    $environmentText = 'UAT';
+                } else if($env == 1) 
+                {
+                    $environmentText = 'SANDBOX';
+                }
+
                 $order->setState($orderState)
                     ->setStatus($orderStatus)
-                    ->addStatusHistoryComment("VodaPay Gateway authorisation success. Transaction #$responseObj->transactionId");
+                    ->addStatusHistoryComment("VodaPay Gateway ($environmentText) authorisation success. Transaction #$responseObj->transactionId");
     
                 $payment = $order->getPayment();
                 $payment->setTransactionId($responseObj->transactionId);

@@ -44,7 +44,9 @@ class RefundRequest implements BuilderInterface
     	return [ 
             'API_KEY'=>$gateway_api_key, 
             'REFUND_URL'=>$gateway_refund_gateway_url,
-            'ENV' => $env
+            'ENV' => $env,
+            'URL' => $this->_gatewayConfig->getEndpointUrl(),
+            'NOTIFICATION_URL' => $this->_gatewayConfig->getNotificationUrl()
         ];
     }
 }

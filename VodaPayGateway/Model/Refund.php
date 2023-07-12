@@ -10,7 +10,7 @@ namespace VPG\VodaPayGateway\Model;
 //require_once( dirname(__FILE__) .'../Controller/Checkout/Vpg/lib/Model/ElectronicReceipt.php' );
 //require_once( dirname(__FILE__) .'../Controller/Checkout/Vpg/lib/Model/ElectronicReceiptMethod.php' );
 //require_once( dirname(__FILE__) .'../Controller/Checkout/Vpg/lib/ObjectSerializer.php' );
-//require_once(dirname(__FILE__) .'../Controller/Checkout/Vpg/lib/Model/ResponseCodeConstants.php');
+//require_once(dirname(__FILE__) .'./RefundResponseCodeConstants.php');
 
 use VPG\VodaPayGateway\Helper\Crypto;
 use Magento\Payment\Gateway\Response\HandlerInterface;
@@ -54,6 +54,9 @@ class Refund extends \Magento\Payment\Model\Method\AbstractMethod implements Han
 
 		
 		$refund_url = $response['REFUND_URL'];
+		$notification_url = $response['NOTIFICATION_URL'];
+		$Zlogger->info('Notification Url '. $notification_url);
+		$Zlogger->info('Notification Url Test'. !isset($notification_url));
 		$apiKey = $response['API_KEY'];
 		$env = $response['ENV'];
         $Zlogger->info('Refund '. $refund_url);
@@ -103,13 +106,22 @@ class Refund extends \Magento\Payment\Model\Method\AbstractMethod implements Han
 		// 	'notifications' => '\VodaPayGatewayClient\Model\Notifications',
 		// 	'electronic_receipt' => '\VodaPayGatewayClient\Model\ElectronicReceipt',
 		// ];
-
+	    if(!isset($notification_url))
+		{
+			$notification = [];
+		}
+		else {
+			$notification = [
+				'notificationUrl' => $notification_url
+			];
+		}
 		$refund_details = [ 
 			"echoData" => $echoData,
 			"traceId" => $retrievalReference,
 			"originalTransactionId" => $transaction_id,
 			"amount" => $refund_amount,
-			"electronicReceipt" => $eReceipt
+			"electronicReceipt" => $eReceipt,
+			"notifications" => $notification
 		];
 
 		$json = json_encode($refund_details);
@@ -156,18 +168,26 @@ class Refund extends \Magento\Payment\Model\Method\AbstractMethod implements Han
     
             $responseCode = $responseObj->data->responseCode;
             // $Zlogger->info('Response'. json_encode($responseObj->data));
-            if(in_array($responseCode, \VodaPayGatewayClient\Model\ResponseCodeConstants::getGoodResponseCodeList())){
+            if(in_array($responseCode, \VPG\VodaPayGateway\Model\RefundResponseCodeConstants::getGoodResponseCodeList())){
                 //SUCCESS
                 if($responseCode == "00"){
                     return $this;
                 }
-            }elseif(in_array($responseCode, \VodaPayGatewayClient\Model\ResponseCodeConstants::getBadResponseCodeList())){
+            }elseif(in_array($responseCode, \VPG\VodaPayGateway\Model\RefundResponseCodeConstants::getBadResponseCodeList())){
                 //FAILURE
                 $error_message =  $responseObj->data->responseMessage;
 				$this->_logger->error(__($error_message));
 				throw new LocalizedException(__($error_message));
             }
         }
+		else
+		{
+			$responseJson = $response->getBody()->getContents();
+            $responseObj = json_decode($responseJson);
+			$Zlogger->info($responseObj);
+			throw new LocalizedException(__($error_message));
+
+		}
 		
 	}
 

@@ -42,6 +42,9 @@
                 <field id="store_url" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Store URL</label>
                 </field>
+                <field id="notification_url" translate="label" type="text" sortOrder="110" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Notification URL</label>
+                </field>
             </group>
         </section>
     </system>

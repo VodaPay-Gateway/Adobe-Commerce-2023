@@ -101,4 +101,5 @@
             </argument>
         </arguments>
     </virtualType>
+    <preference for="VPG\VodaPayGateway\Api\NotifyInterface" type="VPG\VodaPayGateway\Model\Notify"/>
 </config>
