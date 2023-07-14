@@ -32,21 +32,13 @@ class AuthorizationRequest implements BuilderInterface
      */
     private $config;
 
-	/**
-     * @var Logger
-     */
-    private $logger;
-
     /**
      * @param ConfigInterface $config
-     * @param Logger $config
      */
     public function __construct(
         ConfigInterface $config,
-		Logger $logger
     ) {
         $this->config = $config;
-		$this->logger = $logger;
     }
 
     /**
@@ -57,9 +49,6 @@ class AuthorizationRequest implements BuilderInterface
      */
     public function build(array $buildSubject)
     {
-		//$writer = new \Zend_Log_Writer_Stream(BP . '/var/log/requestfile.log');
-		//$Zlogger = new \Zend_Log();
-		//$Zlogger->addWriter($writer);
         if (!isset($buildSubject['payment'])
             || !$buildSubject['payment'] instanceof PaymentDataObjectInterface
         ) {
@@ -67,39 +56,9 @@ class AuthorizationRequest implements BuilderInterface
         }
 
 		$payment = $buildSubject['payment'];
-        //$stateObject = $buildSubject['stateObject'];
-
-		// $order = $payment->getOrder();
-
-		// $stateObject->setState(Order::STATE_PENDING_PAYMENT);
-        // $stateObject->setStatus(Order::STATE_PENDING_PAYMENT);
-        // $stateObject->setIsNotified(false);
 
         return [ 'IGNORED' => [ 'IGNORED' ] ];
     }
-
-    /**
-	 * getTotalAmount
-	 */
-	public function getTotalAmount( $order )
-	{
-		//$this->logger->debug('Grand Total : '. $order->getGrandTotal());
-		//$this->logger->debug('Base Grand Total : '. $order->getBaseGrandTotal());
-			// $newWriter = new \Zend_Log_Writer_Stream(BP . '/var/log/getAmount.log');
-			// $newZlogger = new \Zend_Log();
-			// $newZlogger->addWriter($newWriter);
-			// $newZlogger->info('Logger Order Amount : '. json_encode($order));
-
-			try
-			{
-				$price = $this->getNumberFormat( $order->getBaseGrandTotal() );
-			}
-			catch(Exception $e) {
-				$newZlogger->info('getTotalAmount '. $e->getMessage());
-			}
-
-		return $price;
-	}
 
 	/**
 	 * getNumberFormat
