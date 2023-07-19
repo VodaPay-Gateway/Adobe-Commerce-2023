@@ -2,14 +2,6 @@
 
 namespace VPG\VodaPayGateway\Controller\Checkout;
 
-require_once( dirname(__FILE__) .'/Vpg/lib/Model/ModelInterface.php' );
-require_once( dirname(__FILE__) .'/Vpg/lib/Model/VodaPayGatewayPayment.php' );
-require_once( dirname(__FILE__) .'/Vpg/lib/Model/Notifications.php' );
-require_once( dirname(__FILE__) .'/Vpg/lib/Model/Styling.php' );
-require_once( dirname(__FILE__) .'/Vpg/lib/Model/ElectronicReceipt.php' );
-require_once( dirname(__FILE__) .'/Vpg/lib/Model/ElectronicReceiptMethod.php' );
-require_once( dirname(__FILE__) .'/Vpg/lib/ObjectSerializer.php' );
-require_once( dirname(__FILE__) .'/Vpg/lib/Model/PaymentIntentAdditionalDataModel.php' );
 require_once(dirname(__FILE__) .'/Vpg/lib/Model/ResponseCodeConstants.php');
 
 
@@ -52,16 +44,17 @@ class Index extends AbstractAction {
 				);
 				$retrievalReference = str_pad(ltrim($order->getRealOrderId(), '0'), 12, $retrievalReference, STR_PAD_LEFT);
 				$echoData = json_encode(['order_id'=>$order->getRealOrderId()]);
-				$additionData = new \VodaPayGatewayClient\Model\PaymentIntentAdditionalDataModel;
-				$styling = new \VodaPayGatewayClient\Model\Styling;
-				$styling->setLogoUrl("");
-				$styling->setBannerUrl("");
+				//$additionData = new \VodaPayGatewayClient\Model\PaymentIntentAdditionalDataModel;
+				$styling = [
+                    "bannerUrl" => "",
+                    "logoUrl" => ""
+                ];
                 $amount = intval($order->getTotalDue() * 100);
-				$peripheryData = new \VodaPayGatewayClient\Model\Notifications;
-                $peripheryData->setNotificationUrl($notification);
-				$peripheryData->setCallbackUrl($storeUrl.'/vpg/checkout/callback');
-				$eReceipt = new \VodaPayGatewayClient\Model\ElectronicReceipt;
-				$eReceipt->setMethod(\VodaPayGatewayClient\Model\ElectronicReceiptMethod::SMS);
+                $peripheryData = [
+                    "notificationUrl" => $notification,
+                    "callbackUrl" => $storeUrl.'/vpg/checkout/callback'
+                ];
+                
 				$number = $address->getTelephone();
 				if(str_starts_with($number, '0'))
 				{
@@ -69,8 +62,13 @@ class Index extends AbstractAction {
 					$number =  preg_replace($ptn, "27", $number);
 				//	$Zlogger->info("Number: ". $number);
 				}
+
+                $eReceipt = [
+                    'method' => 0,
+                    'address' => $number
+                ];
 				//str_starts_with('http://www.google.com', 'http')
-				$eReceipt->setAddress($number);
+				//$eReceipt->setAddress($number);
                 $var =  [
 					"echoData" => json_encode($echoData),
 					"traceId" => $retrievalReference,

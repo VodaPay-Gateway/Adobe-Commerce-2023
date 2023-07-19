@@ -26,16 +26,8 @@
     </type>
 
     <!-- Logger, initialized with  -->
-    <virtualType name="VodaPayGatewayLogger" type="Magento\Payment\Model\Method\Logger">
-        <arguments>
-            <argument name="config" xsi:type="object">VPG\VodaPayGateway\Gateway\Config\Config</argument>
-        </arguments>
-    </virtualType>
 
     <type name="VPG\VodaPayGateway\Gateway\Http\Client\AuthorizeClient">
-        <arguments>
-            <argument name="logger" xsi:type="object">VodaPayGatewayLogger</argument>
-        </arguments>
     </type>
 
     <!-- Commands infrastructure -->
@@ -60,7 +52,6 @@
     <type name="VPG\VodaPayGateway\Gateway\Request\AuthorizationRequest">
         <arguments>
             <argument name="config" xsi:type="object">VPG\VodaPayGateway\Gateway\Config\Config</argument>
-            <argument name="logger" xsi:type="object">VodaPayGatewayLogger</argument>
         </arguments>
     </type>
 
@@ -101,5 +92,4 @@
             </argument>
         </arguments>
     </virtualType>
-    <preference for="VPG\VodaPayGateway\Api\NotifyInterface" type="VPG\VodaPayGateway\Model\Notify"/>
 </config>

@@ -9,14 +9,14 @@
     <default>
         <payment>
             <vodapay_gateway>
-                <active>1</active>
+                <active>0</active>
+                <is_gateway>1</is_gateway>
                 <model>VodaPayGatewayFacade</model>
                 <title>Pay with VodaPay Gateway</title>
-                <merchant_gateway_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <description>VodaPay Gateway</description>
                 <!-- <order_status>processing</order_status> -->
                 <payment_action>authorize</payment_action>
                 <api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
-                <title>Payment method (VodaPay Gateway)</title>
                 <currency>ZAR</currency>
                 <can_authorize>1</can_authorize>
                 <can_capture>1</can_capture>
@@ -24,8 +24,8 @@
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
                 <can_refund>1</can_refund>
                 <can_use_checkout>1</can_use_checkout>
-                <is_gateway>1</is_gateway>
                 <sort_order>1</sort_order>
+                <can_use_checkout>1</can_use_checkout>
             </vodapay_gateway>
         </payment>
     </default>
