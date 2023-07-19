@@ -33,6 +33,11 @@ class TransferFactory implements TransferFactoryInterface
      */
     public function create(array $request)
     {
+        // $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/tFactoryfile.log');
+		// $Zlogger = new \Zend_Log();
+		// $Zlogger->addWriter($writer);
+        // $Zlogger->info("Welcome to the transfer Factory");
+
         return $this->transferBuilder
             ->setBody($request)
             ->setMethod('POST')
